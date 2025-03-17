@@ -1,14 +1,13 @@
-using System;
-using System.Collections.Generic;
+namespace MovieApp;
 
 public class View
 {
-    public void DisplayMovies(List<string> movies)
+    public void DisplayMovies(List<Movie> movies)
     {
-        Console.WriteLine("Movie List:");
+        Console.WriteLine("\nMovie List:");
         foreach (var movie in movies)
         {
-            Console.WriteLine("- " + movie);
+            Console.WriteLine($"- {movie.Title} ({movie.Year})");
         }
     }
 }

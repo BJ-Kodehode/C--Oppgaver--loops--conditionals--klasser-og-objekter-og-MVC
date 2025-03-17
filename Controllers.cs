@@ -1,9 +1,9 @@
-using System;
+namespace MovieApp;
 
 public class Controller
 {
-    private Model _model;
-    private View _view;
+    private readonly Model _model;
+    private readonly View _view;
 
     public Controller(Model model, View view)
     {
@@ -15,8 +15,8 @@ public class Controller
     {
         while (true)
         {
-            Console.WriteLine("Enter a command (display, add, exit):");
-            string? choice = Console.ReadLine();
+            Console.WriteLine("\nEnter a command (display, add, remove, exit):");
+            string? choice = Console.ReadLine()?.Trim().ToLower();
 
             if (string.IsNullOrWhiteSpace(choice))
             {
@@ -24,34 +24,61 @@ public class Controller
                 continue;
             }
 
-            choice = choice.ToLower();
+            switch (choice)
+            {
+                case "display":
+                    _view.DisplayMovies(_model.Movies);
+                    break;
 
-            if (choice == "display")
-            {
-                _view.DisplayMovies(_model.Movies);
-            }
-            else if (choice == "add")
-            {
-                Console.Write("Enter movie name: ");
-                string? movie = Console.ReadLine();
+                case "add":
+                    Console.Write("Enter movie title: ");
+                    string? title = Console.ReadLine()?.Trim();
 
-                if (string.IsNullOrWhiteSpace(movie))
-                {
-                    Console.WriteLine("Movie name cannot be empty.");
-                    continue;
-                }
+                    if (string.IsNullOrWhiteSpace(title))
+                    {
+                        Console.WriteLine("Movie title cannot be empty.");
+                        continue;
+                    }
 
-                _model.AddMovie(movie);
-            }
-            else if (choice == "exit")
-            {
-                break;
-            }
-            else
-            {
-                Console.WriteLine("Invalid command. Try again.");
+                    Console.Write("Enter movie year: ");
+                    if (!int.TryParse(Console.ReadLine(), out int year))
+                    {
+                        Console.WriteLine("Invalid year. Try again.");
+                        continue;
+                    }
+
+                    _model.AddMovie(title, year);
+                    Console.WriteLine($"Added movie: {title} ({year})");
+                    break;
+
+                case "remove":
+                    Console.Write("Enter movie title to remove: ");
+                    string? removeTitle = Console.ReadLine()?.Trim();
+
+                    if (string.IsNullOrWhiteSpace(removeTitle))
+                    {
+                        Console.WriteLine("Movie title cannot be empty.");
+                        continue;
+                    }
+
+                    if (_model.RemoveMovie(removeTitle))
+                    {
+                        Console.WriteLine($"Movie '{removeTitle}' removed.");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Movie not found.");
+                    }
+                    break;
+
+                case "exit":
+                    Console.WriteLine("Exiting program...");
+                    return;
+
+                default:
+                    Console.WriteLine("Invalid command. Try again.");
+                    break;
             }
         }
     }
-
 }
